@@ -10,6 +10,7 @@ $ alias qnotes=/e/src/local/QuickNotes/QuickNotes/bin/Debug/netcoreapp3.0/qnotes
 Use tool in quick mode (allow to leave just one message):
 
 $ qnotes
+
 [23:10:14] Just one note about something
 
 Use tool in mode of diary:
