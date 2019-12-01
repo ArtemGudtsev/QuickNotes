@@ -1,5 +1,5 @@
 # QuickNotes
-CLI to make quick notes directly from shell
+CLI to make quick notes directly from shell. Files with nodes will be written with .qnotes extension.
 
 ## How to use
 
