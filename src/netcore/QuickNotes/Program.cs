@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Text.RegularExpressions;
+using System.Xml.XPath;
 
 namespace QuickNotes
 {
@@ -14,25 +16,40 @@ namespace QuickNotes
             var fullPathToNotesFile = Path.Combine(folderWithNotes, currentNotesFile);
             var isExit = !(args.Length == 1 && args[0] == "-a");
 
+            const string msgPrefixError = "ERROR";
+            const string msgPrefixHelp = "HELP";
+
             do
             {
                 var timePrefix = $"[{DateTime.Now:HH:mm:ss}] ";//TODO - move time format to configuration as well
 
                 Console.Write(timePrefix);
 
-                var record = Console.ReadLine();
+                var rawRecord = Console.ReadLine();
 
-                if (string.IsNullOrEmpty(record))
+                if (string.IsNullOrEmpty(rawRecord))
                 {
-                    //TODO - error about empty record to the notes
+                    Console.WriteLine($"[{msgPrefixError}] you can't save empty record to notes!");
+                    continue;
                 }
-                else if (record == "-x")//TODO - logic with parsing parameters must be moved to separate classes
+
+                var record = rawRecord.Trim();
+
+                if (Regex.IsMatch(record, "^(-|--)"))//TODO - logic with parsing parameters must be moved to separate classes
                 {
-                    isExit = true;
-                }
-                else if (record[0] == '-')
-                {
-                    //TODO - error in case if parameter can't be recognized
+                    if (Regex.IsMatch(record, "^(-h|--help)"))
+                    {
+                        Console.WriteLine($"[{msgPrefixHelp}] -h (--help) - will show this help");
+                        Console.WriteLine($"[{msgPrefixHelp}] -x (--exit) - will close tool");
+                    }
+                    else if (Regex.IsMatch(record, "^(-x|--exit)"))
+                    {
+                        isExit = true;
+                    }
+                    else
+                    {
+                        Console.WriteLine($"[{msgPrefixError}] parameter'{record}' can't be recognized!");
+                    }
                 }
                 else
                 {
