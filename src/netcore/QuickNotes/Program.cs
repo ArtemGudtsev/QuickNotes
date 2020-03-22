@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.XPath;
 
@@ -19,11 +22,14 @@ namespace QuickNotes
             const string msgPrefixError = "ERROR";
             const string msgPrefixHelp = "HELP";
 
+            var tags = new List<string>();
+
             do
             {
-                var timePrefix = $"[{DateTime.Now:HH:mm:ss}] ";//TODO - move time format to configuration as well
+                var timePrefix = $"[{DateTime.Now:HH:mm:ss}]";//TODO - move time format to configuration as well
+                var tagsSuffix = GetTagsCollectionInLine(tags);
 
-                Console.Write(timePrefix);
+                Console.Write($"{timePrefix}{tagsSuffix} ");
 
                 var rawRecord = Console.ReadLine();
 
@@ -41,10 +47,31 @@ namespace QuickNotes
                     {
                         Console.WriteLine($"[{msgPrefixHelp}] -h (--help) - will show this help");
                         Console.WriteLine($"[{msgPrefixHelp}] -x (--exit) - will close tool");
+                        Console.WriteLine(
+                            $"[{msgPrefixHelp}] --add-tag=<tag-name> - will add tag to tags list for next records");
+                        Console.WriteLine($"[{msgPrefixHelp}] --clear-tags - will clean tags list");
                     }
                     else if (Regex.IsMatch(record, "^(-x|--exit)"))
                     {
                         isExit = true;
+                    }
+                    else if (Regex.IsMatch(record, "^(--add-tag)"))
+                    {
+                        var index = "--add-tag=".Length;
+                        var tag = index < record.Length ? record.Substring(index) : string.Empty;
+
+                        if (!string.IsNullOrEmpty(tag))
+                        {
+                            tags.Add(tag);
+                        }
+                        else
+                        {
+                            Console.WriteLine($"[{msgPrefixError}] provided tag name was empty!");
+                        }
+                    }
+                    else if (Regex.IsMatch(record, "^(--clear-tags)"))
+                    {
+                        tags.Clear();
                     }
                     else
                     {
@@ -53,7 +80,8 @@ namespace QuickNotes
                 }
                 else
                 {
-                    record = timePrefix + record;
+                    record = $"{timePrefix}{tagsSuffix} {record}";
+
                     if (File.Exists(fullPathToNotesFile))
                     {
                         File.AppendAllLines(fullPathToNotesFile, new[] { record });
@@ -64,6 +92,20 @@ namespace QuickNotes
                     }
                 }
             } while (!isExit);
+        }
+
+        private static string GetTagsCollectionInLine(IEnumerable<string> tags)
+        {
+            if (tags == null || !tags.Any()) return string.Empty;
+
+            var sb = new StringBuilder();
+
+            foreach (var tag in tags)
+            {
+                sb.Append($"[{tag}]");
+            }
+
+            return sb.ToString();
         }
     }
 }
