@@ -40,7 +40,7 @@ namespace QuickNotes
 
                 var record = rawRecord.Trim();
 
-                if (Regex.IsMatch(record, "^(-|--)"))//TODO - logic with parsing parameters must be moved to separate git repo
+                if (Regex.IsMatch(record, "^(-|--)"))//TODO - logic with parsing parameters must be moved to separate git repo (https://github.com/ArtemGudtsev/GiveMeParams)
                 {
                     if (Regex.IsMatch(record, "^(-h|--help)"))
                     {
