@@ -8,7 +8,6 @@ using System.Xml.XPath;
 
 namespace QuickNotes
 {
-    //TODO - ability to add/clear tags for records
     class Program
     {
         static void Main(string[] args)
@@ -41,7 +40,7 @@ namespace QuickNotes
 
                 var record = rawRecord.Trim();
 
-                if (Regex.IsMatch(record, "^(-|--)"))//TODO - logic with parsing parameters must be moved to separate classes
+                if (Regex.IsMatch(record, "^(-|--)"))//TODO - logic with parsing parameters must be moved to separate git repo
                 {
                     if (Regex.IsMatch(record, "^(-h|--help)"))
                     {
