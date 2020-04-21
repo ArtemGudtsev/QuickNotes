@@ -21,3 +21,11 @@ Use tool in mode of diary:
   [23:12:42] 'x' will not be written to qnote file  
   [23:12:54] let's try  
   [23:12:57] x  
+
+## Next step - Go
+
+Implement tool in Go as proof.
+
+https://www.tutorialspoint.com/go/index.htm
+
+https://tour.golang.org/welcome/1
