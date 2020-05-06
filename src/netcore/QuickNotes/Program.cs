@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Xml.XPath;
 
 namespace QuickNotes
 {
@@ -12,7 +11,6 @@ namespace QuickNotes
     {
         static void Main(string[] args)
         {
-            //TODO - move to config file, create classes to work with this configuration
             const string folderWithNotes = @"E:\out\qnotes";
             var currentNotesFile = $"{DateTime.Now:yyyyMMdd}.qnote";
             var fullPathToNotesFile = Path.Combine(folderWithNotes, currentNotesFile);
@@ -25,7 +23,7 @@ namespace QuickNotes
 
             do
             {
-                var timePrefix = $"[{DateTime.Now:HH:mm:ss}]";//TODO - move time format to configuration as well
+                var timePrefix = $"[{DateTime.Now:HH:mm:ss}]";
                 var tagsSuffix = GetTagsCollectionInLine(tags);
 
                 Console.Write($"{timePrefix}{tagsSuffix} ");
@@ -40,7 +38,7 @@ namespace QuickNotes
 
                 var record = rawRecord.Trim();
 
-                if (Regex.IsMatch(record, "^(-|--)"))//TODO - logic with parsing parameters must be moved to separate git repo (https://github.com/ArtemGudtsev/GiveMeParams)
+                if (Regex.IsMatch(record, "^(-|--)"))
                 {
                     if (Regex.IsMatch(record, "^(-h|--help)"))
                     {
@@ -83,11 +81,11 @@ namespace QuickNotes
 
                     if (File.Exists(fullPathToNotesFile))
                     {
-                        File.AppendAllLines(fullPathToNotesFile, new[] { record });
+                        File.AppendAllLines(fullPathToNotesFile, new[] { record }, Encoding.UTF8);
                     }
                     else
                     {
-                        File.WriteAllLines(fullPathToNotesFile, new[] { record });
+                        File.WriteAllLines(fullPathToNotesFile, new[] { record }, Encoding.UTF8);
                     }
                 }
             } while (!isExit);
