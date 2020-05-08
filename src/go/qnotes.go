@@ -46,7 +46,13 @@ func main() {
 		var record string
 
 		fmt.Printf("[%s][%s] ", timePrefix, tagsSuffix)
-		fmt.Scan(&record)// todo - is err processing required here?
+
+		var _, scanError = fmt.Scan(&record)// todo - is err processing required here?
+
+		if scanError != nil {
+			panic(scanError)
+		}
+
 		strings.Trim(record, " ")
 
 		if record == "" {
