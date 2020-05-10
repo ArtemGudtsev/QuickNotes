@@ -10,14 +10,19 @@ import (
 )
 
 func main() {
-	const folderWithNotes = "E:\\out\\qnotes" //todo - https://github.com/ArtemGudtsev/QuickNotes/projects/1#card-37631245
+	//todo - https://github.com/ArtemGudtsev/QuickNotes/projects/1#card-37631245
+	const folderWithNotes = "E:\\out\\qnotes"
+	const notesFileExtension = ".qnote"
+
+
 	const msgPrefixError = "ERROR"
 	const msgPrefixHelp = "HELP"
-	const notesFileExtension = ".qnote"
 
 	var notesFileName = time.Now().Format("20060102") + notesFileExtension
 	var notesFilePath = path.Join(folderWithNotes, notesFileName)
 	var tags []string
+
+	_ = os.Mkdir(folderWithNotes, 0660)// attempt to create folder and ignore errors
 
 	var notesFile, notesFileError = os.OpenFile(notesFilePath, os.O_CREATE|os.O_APPEND, 0660)
 
@@ -47,7 +52,7 @@ func main() {
 
 		fmt.Printf("[%s][%s] ", timePrefix, tagsSuffix)
 
-		var _, scanError = fmt.Scan(&record)// todo - is err processing required here?
+		var _, scanError = fmt.Scan(&record)
 
 		if scanError != nil {
 			panic(scanError)
@@ -92,7 +97,8 @@ func getTagsCollection(tags []string) string {
 	}
 
 	for i := range tags {
-		result += tags[i]// todo - https://github.com/ArtemGudtsev/QuickNotes/projects/1#card-37643704
+		// todo - https://github.com/ArtemGudtsev/QuickNotes/projects/1#card-37643704
+		result += tags[i]
 	}
 
 	return result
