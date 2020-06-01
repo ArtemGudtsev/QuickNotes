@@ -9,14 +9,13 @@ import (
 	"time"
 )
 
+const msgPrefixError = "ERROR"
+const msgPrefixHelp = "HELP"
+
 func main() {
 	//todo - https://github.com/ArtemGudtsev/QuickNotes/projects/1#card-37631245
 	const folderWithNotes = "E:\\out\\qnotes"
 	const notesFileExtension = ".qnote"
-
-
-	const msgPrefixError = "ERROR"
-	const msgPrefixHelp = "HELP"
 
 	var notesFileName = time.Now().Format("20060102") + notesFileExtension
 	var notesFilePath = path.Join(folderWithNotes, notesFileName)
@@ -50,8 +49,10 @@ func main() {
 		var tagsSuffix = getTagsCollection(tags)
 		var record string
 
-		fmt.Printf("[%s][%s] ", timePrefix, tagsSuffix)
+		//fmt.Printf("[%s]%s ", timePrefix, tagsSuffix)
+		fmt.Printf("[%s] ", timePrefix)
 
+		//var _, scanError = fmt.Scanln(&record)
 		var _, scanError = fmt.Scan(&record)
 
 		if scanError != nil {
@@ -60,25 +61,36 @@ func main() {
 
 		strings.Trim(record, " ")
 
-		if record == "" {
+		if record == "" || record == "\n" {
 			fmt.Printf("[%s] you can't save empty record to notes!\n", msgPrefixError)
 			continue
 		}
 
 		if paramHunter.MatchString(record) {
 			if paramHelpHunter.MatchString(record) {
-
+				showHelp()
 			} else if paramExitHunter.MatchString(record) {
 				return
 			} else if paramAddTagHunter.MatchString(record) {
+				var index = len("--add-tag")
+				var tag = ""
 
+				if index < len(record) {
+					tag = string(record[:index])
+				}
+
+				if tag != "" {
+					tags = append(tags, tag)
+				} else {
+					showErrorMsg("provided tag name was empty!")
+				}
 			} else if paramClearTagsHunter.MatchString(record) {
-
+				tags = tags[:0]
 			} else {
-
+				showErrorMsg(fmt.Sprintf("Parameter %s can't be recognized", record))
 			}
 		} else {
-			var resultRecord = fmt.Sprintf("[%s][%s] %s", timePrefix, tagsSuffix, record)
+			var resultRecord = fmt.Sprintf("[%s]%s %s", timePrefix, tagsSuffix, record)
 			// todo - https://github.com/ArtemGudtsev/QuickNotes/projects/1#card-37643592
 			var _, notesFileWriteError = notesFile.WriteString(resultRecord + "\n")
 
@@ -96,11 +108,28 @@ func getTagsCollection(tags []string) string {
 		return result
 	}
 
+	result = "["
 	for i := range tags {
 		// todo - https://github.com/ArtemGudtsev/QuickNotes/projects/1#card-37643704
 		result += tags[i]
 	}
+	result += "]"
 
 	return result
+}
+
+func showHelp() {
+	showHelpMsg("-h (--help) - will show this help")
+	showHelpMsg("-x (--exit) - will close tool")
+	showHelpMsg("--add-tag=<tag-name> - will add tag to tags list for next records")
+	showHelpMsg("--clear-tags - will clean tags list")
+}
+
+func showHelpMsg(msg string) {
+	fmt.Printf("[%s] %s\n", msgPrefixHelp, msg)
+}
+
+func showErrorMsg(msg string)  {
+	fmt.Printf("[%s] %s\n", msgPrefixError, msg)
 }
 
